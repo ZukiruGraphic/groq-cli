@@ -1,0 +1,82 @@
+Groq CLI v1.0 - Install Guide
+
+
+0. COPY-PASTE THIS TO INSTALL ALL DEPENDENCIES
+
+Just paste this one prompt in Termux, all dependencies will install:
+
+pkg install python chafa -y && pip install requests prompt_toolkit
+
+What it installs:
+- python          : to run groq_chat.py
+- chafa           : to show logo.png in header
+- requests        : to call Groq API
+- prompt_toolkit  : for input, highlight @ / . , wrapping
+
+If pip fails, try:
+pip install --break-system-packages requests prompt_toolkit
+
+1. INSTALL DEPENDENCIES (manual, if you don't want the one-liner)
+
+pkg install python chafa -y
+pip install requests prompt_toolkit
+
+2. PUT FILES
+
+Put these files in $HOME/groq/ :
+- groq_chat.py
+- logo.png
+
+Do NOT put config.json. It contains your API key.
+
+3. CREATE ALIAS
+
+echo 'alias groq="python3 $HOME/groq/groq_chat.py"' >> ~/.bashrc
+source ~/.bashrc
+
+If you use zsh, replace ~/.bashrc with ~/.zshrc.
+
+4. SET YOUR KEY + MODEL
+
+groq -k "your-keys"
+groq -m "your-model"
+
+Get your key from:
+https://console.groq.com -> API Keys -> Create
+
+Free model example:
+openai/gpt-oss-20b
+
+5. CHECK
+
+groq --help
+groq -m
+groq -k
+groq
+
+6. INSIDE CHAT
+
+.h help  .q quit  .c clear  @file read file
+Type @filename to read a file.
+
+7. LOGO - SO IT SHOWS WHEN YOU RUN groq
+
+Logo needs 2 things, both are required:
+
+a) File:
+   $HOME/groq/logo.png
+   Must be exactly here. Do NOT rename it.
+   Check: ls -1 $HOME/groq/logo.png
+
+b) Tool:
+   chafa
+   This renders the PNG in Termux terminal.
+   Check: chafa --version
+   Install: pkg install chafa -y
+
+How it works:
+   chafa --size 40x10 $HOME/groq/logo.png
+
+If chafa is missing -> logo will not show, chat still works.
+If logo.png is missing -> chafa will error, chat still works.
+If both are present -> logo shows on top of header every time you run groq.
