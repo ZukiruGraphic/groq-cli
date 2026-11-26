@@ -171,7 +171,9 @@ def render_md(out):
 
 def header():
     import os as _o
-    _o.system("chafa --size 40x10 /data/data/com.termux/files/home/groq/logo.png")
+    _w = max(40, min(50, W()-4))
+    _h = min(12, max(10, _w // 4))
+    _o.system(f"chafa --size {_w}x{_h} /data/data/com.termux/files/home/groq/logo.png")
     print(f"  {CYAN}Groq CLI {RESET}{DIM}v1.0{RESET}")
     print("")
     print(f"  {DIM}Authenticated with groq-api-key /auth{RESET}")
