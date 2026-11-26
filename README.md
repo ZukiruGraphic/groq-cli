@@ -1,8 +1,10 @@
-# Groq CLI v1.0
+# **Groq CLI v1.0**
 A minimal Groq CLI for Termux, styled like Gemini CLI.
 
 Install Dependencies - Copy-Paste This:
+```bash
 pkg install python chafa -y && pip install requests prompt_toolkit
+```
 
 What it installs:
 - python - to run groq_chat.py
@@ -11,13 +13,15 @@ What it installs:
 - prompt_toolkit - for input, highlight, wrapping
 
 If pip fails, try:
+```bash
 pip install --break-system-packages requests prompt_toolkit
+```
 
 Features:
-- Chat mode with groq
-- Quick use with groq "hello"
-- File reading with @filename
-- Markdown: bold, italic, code, tables, codeblocks
+- **Chat mode** with `groq`
+- **Quick use** with `groq "hello"`
+- **File reading** with `@filename`
+- **Markdown:** **bold**, *italic*, `code`, tables, codeblocks
 - Wrapped responses, wrapped input, wrapped You: subtext
 - Pastel colors, PNG logo header via chafa
 - Shortcuts: .h help, .q quit, .c clear, . for help
@@ -32,12 +36,14 @@ Files:
 Do NOT put config.json in upload. It contains your API key.
 
 Setup:
+```bash
 alias groq="python3 $HOME/groq/groq_chat.py"
 source ~/.bashrc
 groq -k "your-keys"
 groq -m "your-model"
-Get key from console.groq.com - API Keys - Create.
-Free model: openai/gpt-oss-20b
+Get key from [Groq Console](https://console.groq.com) - API Keys - Create.
+Free model: `openai/gpt-oss-20b`
+```
 
 Usage:
 groq - open chat
@@ -63,3 +69,8 @@ Notes:
 - Workspace is /data/data/com.termux/files/home
 - Model and key are saved in $HOME/groq/config.json
 - Key shown by groq -k is masked, only first 7 + last 4 chars
+
+## Official Links
+- **Groq:** https://groq.com
+- **Groq Console:** https://console.groq.com
+- **Groq Docs:** https://console.groq.com/docs
