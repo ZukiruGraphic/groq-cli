@@ -42,7 +42,22 @@ RESET = "\033[0m"
 LOADING = "\033[38;2;233;213;255m"
 SPINNER = ["⠋","⠙","⠹","⠸","⠼","⠴","⠦","⠧","⠇","⠏"]
 # AI optimasi: system prompt + ingatan chat + temp rendah buat code biar gak ngarang
-SYSTEM_PROMPT = "Kamu Groq CLI di Termux. Jawab in the SAME language as user: {_detect_lang(qs)} - reply ONLY in that language. Use markdown: **bold** for filename, `code` for commands like `python3 hi.py`. User request: {qs} (kalau user pake Indonesia kasual, jawab Indonesia kasual). Kalau user minta code, output code-nya HARUS valid, lengkap, dan bisa langsung di-run. Kalau file .py, print HARUS pake () dan petik, contoh print(\"test2\"). Jangan ngarang isi file kalau gak dikasih isi file-nya, bilang gak tau. Jawab singkat, padat, jangan muter-muter."
+SYSTEM_PROMPT = """You are Groq CLI in Termux, a helpful coding assistant.
+CRITICAL LANGUAGE RULE - LANGUAGE LOCK - HIGHEST PRIORITY:
+- You MUST reply in the EXACT same language as the user's LAST message.
+- If user writes in English, reply in English ONLY. NEVER switch to Indonesian.
+- If user writes in Indonesian, reply in Indonesian ONLY. NEVER switch to English.
+- If user writes in mixed casual Indonesian, reply in SAME mixed casual Indonesian.
+- Never switch language mid-conversation unless user CLEARLY switches first.
+- Do NOT use location / IP / timezone to guess language. Use ONLY user's last message.
+- Code stays in English, but ALL explanation MUST stay in user's language.
+- If you are about to reply in different language than user's last message, STOP and rewrite in user's language.
+CODE RULES - MUST FOLLOW:
+- If user asks for code, output code MUST be valid, complete, and runnable directly.
+- If file is .py, print MUST use () and quotes, example print("test2"). NEVER print without ().
+- Do NOT invent file content if user did not give content, say you do not know.
+- Answer short, dense, do NOT ramble."""
+
 HISTORY = []
 MAX_HISTORY = 10
 MODEL = "openai/gpt-oss-20b"
@@ -277,12 +292,19 @@ def _sub(msg):
     print("")
 
 def _detect_lang(qs):
-    _low = qs.lower()
-    _indo = ["buat", "bikin", "isi", "isinya", "di folder", "cukup", "jalankan", "sudah", "yang", "dan", "di ", "ke ", "dari ", "buat file", "editin", "hapus"]
-    for _w in _indo:
-        if _w in _low:
+    try:
+        low = " " + str(qs).lower().replace(",", " ").replace(".", " ").replace("?", " ").replace("!", " ") + " "
+        id_words = [" yang ", " adalah ", " dan ", " dengan ", " untuk ", " dari ", " ini ", " itu ", " kenapa ", " gimana ", " bagaimana ", " tolong ", " bikin ", " buat ", " gw ", " lu ", " gue ", " kamu ", " saya ", " apa ", " dimana ", " kapan ", " berapa ", " jangan ", " udah ", " belum ", " lagi ", " sama ", " kayak ", " banget ", " dong ", " sih ", " kok ", " nih ", " tuh ", " aja ", " nggak ", " gak ", " benerin ", " masih ", " suka ", " keluar ", " sendiri ", " bahasa ", " dipake ", " dipakai ", " jelasin ", " sejarah "]
+        en_words = [" what ", " how ", " why ", " when ", " where ", " which ", " please ", " tell ", " explain ", " more ", " details ", " about ", " history ", " usage ", " hello ", " thanks ", " can ", " you ", " the ", " is ", " are ", " groq ", " python ", " details "]
+        id_n = sum(1 for w in id_words if w in low)
+        en_n = sum(1 for w in en_words if w in low)
+        if id_n > en_n:
             return "Indonesian"
-    return "English"
+        if en_n > 0:
+            return "English"
+        return "English"
+    except:
+        return "English"
 
 def _print_groq_answer(ans):
     print("\r" + " " * 50 + "\r", end="")
