@@ -2,11 +2,11 @@
 
 ## Preview
 
-Chat - language lock, Inggris tetep Inggris:
+screenshots/preview-chat.jpg
 
 ![Preview Chat](screenshots/preview-chat.jpg)
 
-Groq CLI di Termux - `.w` / `.e` / `.d` / `@current`:
+screenshots/preview-cli.jpg
 
 ![Preview CLI](screenshots/preview-cli.jpg)
 
