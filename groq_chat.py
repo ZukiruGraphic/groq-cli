@@ -392,7 +392,7 @@ def call_groq(msgs, box):
     th = threading.Thread(target=spin)
     th.start()
     try:
-        r = requests.post("https://api.groq.com/openai/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json={"model": MODEL, "messages": msgs}, timeout=60)
+        r = requests.post("https://api.groq.com/openai/v1/chat/completions", headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"}, json={"model": MODEL, "messages": [{"role": "system", "content": SYSTEM_PROMPT}] + HISTORY[-10:] + msgs, "temperature": 0.7, "max_tokens": 2000}, timeout=60)
         stop.set()
         th.join()
         sys.stdout.write("\r\033[K")
@@ -551,6 +551,7 @@ while True:
                 _tgt.parent.mkdir(parents=True, exist_ok=True)
                 _tgt.write_text(_out)
                 _sub(f"Done, file written to {_tgt}")
+                globals()["LAST_FILE"] = str(_tgt)
             _isi = qs
             _ld = _show_loading()
             _ans = _groq_short(f"Give a short response in the SAME language as user: {_detect_lang(qs)}, bilang file {', '.join(_all)} udah dibikin, tiap file isinya beda sesuai permintaan, cara jalaninnya pake python3 <nama file>. User request: {qs}")
@@ -583,6 +584,7 @@ while True:
         _target.parent.mkdir(parents=True, exist_ok=True)
         _target.write_text(_out)
         _sub(f"Done, file written to {_target}")
+        globals()["LAST_FILE"] = str(_target)
         _isi = qs
         _ld = _show_loading()
         _ans = _groq_short(f"Give a short response with markdown **bold** for filename and `code` for commands, in the SAME language as user: {_detect_lang(qs)} - reply ONLY in that language. Use markdown: **bold** for filename, `code` for commands like `python3 hi.py`. User request: {qs} 1-2 kalimat in the SAME language as user: {_detect_lang(qs)} - reply ONLY in that language. Use markdown: **bold** for filename, `code` for commands like `python3 hi.py`. User request: {qs}, bilang file {_target.name} udah dibikin, isinya tentang {_isi[:200]}, cara jalaninnya pake python3 {_target.name}, DO NOT mention @current, JANGAN sebut kata file pertama. Do not output code-nya lagi.")
@@ -681,6 +683,14 @@ while True:
     if not qs:
         continue
     extra = ""
+    # auto @current: kasih list file cwd ke AI, biar gak perlu ketik @current terus
+    try:
+        _cwd_files = [x.name for x in pathlib.Path.cwd().iterdir()][:20]
+        extra += f"\n\nCurrent folder {pathlib.Path.cwd()}: " + ", ".join(_cwd_files)
+        if LAST_FILE:
+            extra += f"\nLast file: {LAST_FILE}"
+    except:
+        pass
     _skip_current = ("@current" in qs)
     # @current / @. / @ doang = folder sekarang
     if "@current" in qs or "@." in qs or qs.strip() == "@" or " @" in qs or qs.strip().startswith("@ "):
