@@ -1,4 +1,16 @@
 # **Groq CLI v1.0**
+
+## Preview
+
+Chat - language lock, Inggris tetep Inggris:
+
+![Preview Chat](screenshots/preview-chat.jpg)
+
+Groq CLI di Termux - `.w` / `.e` / `.d` / `@current`:
+
+![Preview CLI](screenshots/preview-cli.jpg)
+
+
 A minimal Groq CLI for Termux, styled like Gemini CLI.
 
 Install Dependencies - Copy-Paste This:
